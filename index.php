@@ -13,12 +13,17 @@ $tempsql = "CREATE VIEW lazy AS
                 select ViewHistory.username, 1 lazy
                 from ViewHistory,Recipe
                 where ViewHistory.recipe_id=Recipe.Recipe_id and (Recipe.Recipe_preptime+Recipe.Recipe_readytime)<70
+                      and ViewHistory.time >= '2017-04-12 12:28:00'
                 GROUP BY ViewHistory.username
                 HAVING COUNT(*) >= 3";
 $tempquery = mysqli_query($conn, $tempsql);
+//echo '<script type="text/javascript"> alert("view ok") </script>';
 $getusersql = "select * from lazy where lazy.username = '$current_user'";
+
 $getuserquery = mysqli_query($conn, $getusersql);
+//echo '<script type="text/javascript"> alert("user ok") </script>';
 if(mysqli_num_rows($getuserquery) > 0){
+    //echo '<script type="text/javascript"> alert("lazy section") </script>';
     $remd = 1;
     $tempsql2 = "select * from Recipe where (Recipe.Recipe_preptime+Recipe.Recipe_readytime)<70";
     $query_run2 = mysqli_query($conn, $tempsql2);
@@ -32,7 +37,7 @@ if(mysqli_num_rows($getuserquery) > 0){
 }else{
     $sql = "SELECT Recipe.Recipe_cuisinetype FROM ViewHistory,Recipe 
         WHERE ViewHistory.recipe_id = Recipe.Recipe_id AND ViewHistory.username = '$current_user' 
-             AND ViewHistory.time >= '2017-04-12 12:28:00'
+             AND ViewHistory.time >= '2017-04-12 12:28:00'd
         GROUP BY Recipe.Recipe_cuisinetype 
         HAVING COUNT(*) >= ALL(SELECT COUNT(*) 
                                FROM ViewHistory, Recipe
@@ -44,6 +49,7 @@ if(mysqli_num_rows($getuserquery) > 0){
         $remd = 1;
         // echo '<script type="text/javascript"> alert("search remd recipe based on history successfully") </script>';
         if($row = mysqli_fetch_row($query_run1)){
+            //echo '<script type="text/javascript"> alert("cuisinetyesection") </script>';
             $cuisineType = $row[0];
             $sql2 = "select * from Recipe where Recipe_cuisinetype = '$cuisineType'";
             $query_run2 = mysqli_query($conn, $sql2);
