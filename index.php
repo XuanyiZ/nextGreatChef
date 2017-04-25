@@ -9,7 +9,28 @@ session_start();
 $current_user = $_SESSION["current_username"];
 require 'config.php';
 $remd = 0;
-$sql = "SELECT Recipe.Recipe_cuisinetype FROM ViewHistory,Recipe 
+$tempsql = "CREATE VIEW lazy AS 
+                select ViewHistory.username, 1 lazy
+                from ViewHistory,Recipe
+                where ViewHistory.recipe_id=Recipe.Recipe_id and (Recipe.Recipe_preptime+Recipe.Recipe_readytime)<70
+                GROUP BY ViewHistory.username
+                HAVING COUNT(*) >= 3";
+$tempquery = mysqli_query($conn, $tempsql);
+$getusersql = "select * from lazy where lazy.username = '$current_user'";
+$getuserquery = mysqli_query($conn, $getusersql);
+if(mysqli_num_rows($getuserquery) > 0){
+    $remd = 1;
+    $tempsql2 = "select * from Recipe where (Recipe.Recipe_preptime+Recipe.Recipe_readytime)<70";
+    $query_run2 = mysqli_query($conn, $tempsql2);
+
+    $tempsql3 = "DROP VIEW lazy";
+    if (mysqli_query($conn, $tempsql3)) {
+        echo '<script type="text/javascript"> alert("drop view table successfully") </script>';
+    } else {
+        echo '<script type="text/javascript"> alert("Failed to drop view") </script>';
+    }
+}else{
+    $sql = "SELECT Recipe.Recipe_cuisinetype FROM ViewHistory,Recipe 
         WHERE ViewHistory.recipe_id = Recipe.Recipe_id AND ViewHistory.username = '$current_user' 
              AND ViewHistory.time >= '2017-04-12 12:28:00'
         GROUP BY Recipe.Recipe_cuisinetype 
@@ -18,23 +39,34 @@ $sql = "SELECT Recipe.Recipe_cuisinetype FROM ViewHistory,Recipe
                                WHERE ViewHistory.recipe_id = Recipe.Recipe_id 
                                      AND ViewHistory.username = '$current_user' 
                                GROUP BY Recipe.Recipe_cuisinetype)";
-$query_run1 = mysqli_query($conn, $sql);
-if ($query_run1) {
-    $remd = 1;
-   // echo '<script type="text/javascript"> alert("search remd recipe based on history successfully") </script>';
-    if($row = mysqli_fetch_row($query_run1)){
-        $cuisineType = $row[0];
-        $sql2 = "select * from Recipe where Recipe_cuisinetype = '$cuisineType'";
-        $query_run2 = mysqli_query($conn, $sql2);
-    }else{
-        $sql2 = "select * from Recipe";
-        $query_run2 = mysqli_query($conn, $sql2);
+    $query_run1 = mysqli_query($conn, $sql);
+    if ($query_run1) {
+        $remd = 1;
+        // echo '<script type="text/javascript"> alert("search remd recipe based on history successfully") </script>';
+        if($row = mysqli_fetch_row($query_run1)){
+            $cuisineType = $row[0];
+            $sql2 = "select * from Recipe where Recipe_cuisinetype = '$cuisineType'";
+            $query_run2 = mysqli_query($conn, $sql2);
+        }else {
+            $sql2 = "select * from Recipe";
+            $query_run2 = mysqli_query($conn, $sql2);
+        }
+    } else {
+        echo '<script type="text/javascript"> alert("Failed to search remd recipe history.") </script>';
+
+    }
+    //drop view
+    $tempsql3 = "DROP VIEW lazy";
+    if (mysqli_query($conn, $tempsql3)) {
+        echo '<script type="text/javascript"> alert("drop view table successfully") </script>';
+    } else {
+        echo '<script type="text/javascript"> alert("Failed to drop view") </script>';
     }
 
-} else {
-    echo '<script type="text/javascript"> alert("Failed to search remd recipe history.") </script>';
-
 }
+
+
+
 ?>
 <!DOCTYPE html>
 <!-- Website template by freewebsitetemplates.com -->
