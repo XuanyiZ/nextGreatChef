@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<results>
+ <favorite>
+  <recipe_id>10002</recipe_id>
+  <recipe_name>Italian Roast Beef</recipe_name>
+  <recipe_cuisinetype>Italian</recipe_cuisinetype>
+ </favorite>
+ <favorite>
+  <recipe_id>10003</recipe_id>
+  <recipe_name>Addictive Sesame Chicken</recipe_name>
+  <recipe_cuisinetype>Chinese</recipe_cuisinetype>
+ </favorite>
+ <favorite>
+  <recipe_id>10005</recipe_id>
+  <recipe_name>Mexican Rice</recipe_name>
+  <recipe_cuisinetype>Mexican</recipe_cuisinetype>
+ </favorite>
+ <favorite>
+  <recipe_id>10007</recipe_id>
+  <recipe_name>Japanese Onion Soup</recipe_name>
+  <recipe_cuisinetype>Japanese</recipe_cuisinetype>
+ </favorite>
+ <favorite>
+  <recipe_id>10010</recipe_id>
+  <recipe_name>Chicken Katsu</recipe_name>
+  <recipe_cuisinetype>Japanese</recipe_cuisinetype>
+ </favorite>
+</results>
